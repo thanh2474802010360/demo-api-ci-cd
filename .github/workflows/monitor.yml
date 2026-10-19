@@ -1,0 +1,29 @@
+
+name: Production Monitor
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Login Postman
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        run: |
+          postman login --with-api-key "$POSTMAN_API_KEY"
+
+      - name: Run Production Monitor
+        run: |
+          postman collection run "59055530-8c4ca5c2-497b-41fd-a93a-8ba0c521d8d4"
